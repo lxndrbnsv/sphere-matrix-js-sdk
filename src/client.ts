@@ -7571,6 +7571,22 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
             });
     }
 
+    public isKeyAvailable(license_key: string): Promise<boolean> {
+        return this.http.requestOtherUrl<{ valid: true }>(
+            Method.Get, 'https://v1.sphere.chat/validate_key?license_key=' + license_key
+        ).then((response) => {
+            return response.valid;
+            }
+        ).catch(
+            response => {
+                if (response.valid === false) {
+                    return false;
+                }
+                return Promise.reject(response);
+            }
+        );
+    }
+
     /**
      * @param bindThreepids - Set key 'email' to true to bind any email
      *     threepid uses during registration in the identity server. Set 'msisdn' to
